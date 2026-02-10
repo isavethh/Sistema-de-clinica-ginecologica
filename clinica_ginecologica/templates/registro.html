@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro - GineCare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-heart-pulse-fill text-primary fs-1"></i>
+                    <h3 class="mt-2">Crear cuenta</h3>
+                    <p class="text-muted">Regístrate para acceder al sistema</p>
+                </div>
+                
+                <form method="POST" action="{{ url_for('registro') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombres" class="form-label">Nombres <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nombres" name="nombres" 
+                                   placeholder="Tus nombres" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="apellidos" class="form-label">Apellidos <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="apellidos" name="apellidos" 
+                                   placeholder="Tus apellidos" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cedula" class="form-label">Cédula/DNI <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="cedula" name="cedula" 
+                                   placeholder="Número de identificación" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               placeholder="tu@email.com" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                   placeholder="Tu teléfono">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion" 
+                                   placeholder="Tu dirección">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Mínimo 6 caracteres" minlength="6" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <label for="password_confirm" class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password_confirm" 
+                                   placeholder="Repite la contraseña" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-check mb-4">
+                        <input type="checkbox" class="form-check-input" id="terms" required>
+                        <label class="form-check-label" for="terms">
+                            Acepto los <a href="#">términos y condiciones</a> y la 
+                            <a href="#">política de privacidad</a>
+                        </label>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-person-plus me-2"></i> Crear cuenta
+                        </button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <p class="text-center text-muted mb-0">
+                    ¿Ya tienes cuenta? 
+                    <a href="{{ url_for('login') }}" class="text-primary">Inicia sesión</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Validar que las contraseñas coincidan
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const confirm = document.getElementById('password_confirm').value;
+        
+        if (password !== confirm) {
+            e.preventDefault();
+            alert('Las contraseñas no coinciden');
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

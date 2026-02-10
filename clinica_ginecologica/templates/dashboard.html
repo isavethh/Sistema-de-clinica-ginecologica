@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Panel - GineCare{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Hola, {{ current_user.nombres }} 👋</h2>
+        <p class="text-muted mb-0">Bienvenida a tu panel de salud</p>
+    </div>
+    <a href="{{ url_for('nueva_cita') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i> Nueva Cita
+    </a>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-primary-soft rounded-circle me-3">
+                        <i class="bi bi-calendar-check text-primary"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ proximas_citas|length }}</h3>
+                        <small class="text-muted">Próximas citas</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-success-soft rounded-circle me-3">
+                        <i class="bi bi-journal-medical text-success"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ ultimas_consultas|length }}</h3>
+                        <small class="text-muted">Consultas recientes</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-warning-soft rounded-circle me-3">
+                        <i class="bi bi-bell text-warning"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ recordatorios|length }}</h3>
+                        <small class="text-muted">Recordatorios</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-info-soft rounded-circle me-3">
+                        <i class="bi bi-heart-pulse text-info"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0">{{ current_user.edad }}</h3>
+                        <small class="text-muted">Años</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Próximas Citas -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-calendar-check text-primary me-2"></i>Próximas Citas</h5>
+                <a href="{{ url_for('mis_citas') }}" class="btn btn-sm btn-outline-primary">Ver todas</a>
+            </div>
+            <div class="card-body">
+                {% if proximas_citas %}
+                    <div class="list-group list-group-flush">
+                        {% for cita in proximas_citas %}
+                        <a href="{{ url_for('ver_cita', cita_id=cita.id) }}" class="list-group-item list-group-item-action border-0 px-0">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ cita.tipo_consulta }}</h6>
+                                    <small class="text-muted">
+                                        <i class="bi bi-person me-1"></i>{{ cita.medico.nombre_completo }}
+                                    </small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary-soft text-primary">
+                                        {{ cita.fecha_formateada }}
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">{{ cita.hora_formateada }}</small>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-calendar-x text-muted fs-1"></i>
+                        <p class="text-muted mt-2 mb-0">No tienes citas programadas</p>
+                        <a href="{{ url_for('nueva_cita') }}" class="btn btn-primary btn-sm mt-3">
+                            Agendar cita
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recordatorios -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-bell text-warning me-2"></i>Recordatorios</h5>
+                <a href="{{ url_for('mis_recordatorios') }}" class="btn btn-sm btn-outline-primary">Ver todos</a>
+            </div>
+            <div class="card-body">
+                {% if recordatorios %}
+                    <div class="list-group list-group-flush">
+                        {% for recordatorio in recordatorios %}
+                        <div class="list-group-item border-0 px-0">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ recordatorio.titulo }}</h6>
+                                    <small class="text-muted">{{ recordatorio.descripcion or 'Sin descripción' }}</small>
+                                </div>
+                                <span class="badge bg-{{ 'warning' if recordatorio.tipo == 'cita' else 'info' }}-soft text-{{ 'warning' if recordatorio.tipo == 'cita' else 'info' }}">
+                                    {{ recordatorio.fecha_recordatorio.strftime('%d/%m') }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-bell-slash text-muted fs-1"></i>
+                        <p class="text-muted mt-2 mb-0">No tienes recordatorios activos</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Últimas Consultas -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-journal-medical text-success me-2"></i>Últimas Consultas</h5>
+                <a href="{{ url_for('historial_medico') }}" class="btn btn-sm btn-outline-primary">Ver historial completo</a>
+            </div>
+            <div class="card-body">
+                {% if ultimas_consultas %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Médico</th>
+                                    <th>Diagnóstico</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for historial in ultimas_consultas %}
+                                <tr>
+                                    <td>{{ historial.fecha_consulta.strftime('%d/%m/%Y') }}</td>
+                                    <td>{{ historial.tipo_consulta or 'General' }}</td>
+                                    <td>{{ historial.medico.nombre_completo }}</td>
+                                    <td>{{ (historial.diagnostico[:50] + '...') if historial.diagnostico and historial.diagnostico|length > 50 else (historial.diagnostico or '-') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('ver_historial', historial_id=historial.id) }}" class="btn btn-sm btn-outline-primary">
+                                            Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-journal-x text-muted fs-1"></i>
+                        <p class="text-muted mt-2 mb-0">Aún no tienes consultas registradas</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
