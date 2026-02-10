@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Cita - GineCare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-calendar-check text-primary me-2"></i>Detalle de Cita</h4>
+                <span class="badge bg-{{ 'success' if cita.estado == 'confirmada' else 'warning' if cita.estado == 'pendiente' else 'secondary' if cita.estado == 'completada' else 'danger' }} fs-6">
+                    {{ cita.estado|capitalize }}
+                </span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Tipo de Consulta</h6>
+                        <p class="fs-5 mb-0">{{ cita.tipo_consulta }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Médico</h6>
+                        <p class="fs-5 mb-0">{{ cita.medico.nombre_completo }}</p>
+                        <small class="text-muted">{{ cita.medico.especialidad }}</small>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Fecha</h6>
+                        <p class="fs-5 mb-0">
+                            <i class="bi bi-calendar me-2 text-primary"></i>
+                            {{ cita.fecha_hora.strftime('%A, %d de %B de %Y') }}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Hora</h6>
+                        <p class="fs-5 mb-0">
+                            <i class="bi bi-clock me-2 text-primary"></i>
+                            {{ cita.hora_formateada }}
+                        </p>
+                    </div>
+                </div>
+                
+                {% if cita.motivo %}
+                <div class="mb-4">
+                    <h6 class="text-muted mb-2">Motivo de la Consulta</h6>
+                    <p class="mb-0">{{ cita.motivo }}</p>
+                </div>
+                {% endif %}
+                
+                {% if cita.notas %}
+                <div class="mb-4">
+                    <h6 class="text-muted mb-2">Notas</h6>
+                    <p class="mb-0">{{ cita.notas }}</p>
+                </div>
+                {% endif %}
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('mis_citas') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i> Volver
+                    </a>
+                    {% if cita.estado in ['pendiente', 'confirmada'] %}
+                    <form action="{{ url_for('cancelar_cita', cita_id=cita.id) }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-danger" 
+                                onclick="return confirm('¿Estás segura de cancelar esta cita?')">
+                            <i class="bi bi-x-circle me-2"></i> Cancelar Cita
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        {% if cita.historial %}
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0"><i class="bi bi-journal-medical text-success me-2"></i>Registro de la Consulta</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('ver_historial', historial_id=cita.historial.id) }}" class="btn btn-outline-primary">
+                    Ver registro médico de esta cita
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

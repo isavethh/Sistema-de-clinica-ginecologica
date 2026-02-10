@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportes - GineCare{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="mb-1">Reportes y Estadísticas</h2>
+    <p class="text-muted mb-0">Resumen de tu atención médica</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100 bg-primary text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-calendar-check fs-1 mb-2"></i>
+                <h2 class="mb-0">{{ total_citas }}</h2>
+                <p class="mb-0">Total de Citas</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100 bg-warning text-dark">
+            <div class="card-body text-center">
+                <i class="bi bi-hourglass-split fs-1 mb-2"></i>
+                <h2 class="mb-0">{{ citas_pendientes }}</h2>
+                <p class="mb-0">Citas Pendientes</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100 bg-success text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle fs-1 mb-2"></i>
+                <h2 class="mb-0">{{ citas_completadas }}</h2>
+                <p class="mb-0">Citas Completadas</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100 bg-danger text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-x-circle fs-1 mb-2"></i>
+                <h2 class="mb-0">{{ citas_canceladas }}</h2>
+                <p class="mb-0">Citas Canceladas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Gráfico de Citas por Tipo -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0"><i class="bi bi-pie-chart text-primary me-2"></i>Citas por Tipo de Consulta</h5>
+            </div>
+            <div class="card-body">
+                {% if citas_por_tipo %}
+                <canvas id="citasPorTipoChart"></canvas>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-bar-chart text-muted fs-1"></i>
+                    <p class="text-muted mt-2 mb-0">Sin datos para mostrar</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gráfico de Consultas por Año -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0"><i class="bi bi-bar-chart text-primary me-2"></i>Consultas por Año</h5>
+            </div>
+            <div class="card-body">
+                {% if consultas_por_año %}
+                <canvas id="consultasPorAñoChart"></canvas>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-graph-up text-muted fs-1"></i>
+                    <p class="text-muted mt-2 mb-0">Sin datos para mostrar</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Resumen -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0"><i class="bi bi-table text-primary me-2"></i>Detalle por Tipo de Consulta</h5>
+            </div>
+            <div class="card-body">
+                {% if citas_por_tipo %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tipo de Consulta</th>
+                                <th class="text-center">Cantidad</th>
+                                <th class="text-center">Porcentaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tipo, cantidad in citas_por_tipo %}
+                            <tr>
+                                <td>{{ tipo }}</td>
+                                <td class="text-center">{{ cantidad }}</td>
+                                <td class="text-center">
+                                    {% if total_citas > 0 %}
+                                    {{ "%.1f"|format(cantidad / total_citas * 100) }}%
+                                    {% else %}
+                                    0%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center mb-0">No hay datos disponibles</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Colores para gráficos
+    const colors = [
+        'rgba(78, 115, 223, 0.8)',
+        'rgba(28, 200, 138, 0.8)',
+        'rgba(246, 194, 62, 0.8)',
+        'rgba(231, 74, 59, 0.8)',
+        'rgba(54, 185, 204, 0.8)',
+        'rgba(133, 135, 150, 0.8)',
+        'rgba(105, 0, 132, 0.8)',
+        'rgba(0, 148, 50, 0.8)'
+    ];
+    
+    {% if citas_por_tipo %}
+    // Gráfico de Citas por Tipo
+    const ctxTipo = document.getElementById('citasPorTipoChart').getContext('2d');
+    new Chart(ctxTipo, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for tipo, _ in citas_por_tipo %}'{{ tipo }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                data: [{% for _, cantidad in citas_por_tipo %}{{ cantidad }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: colors,
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    {% endif %}
+    
+    {% if consultas_por_año %}
+    // Gráfico de Consultas por Año
+    const ctxAño = document.getElementById('consultasPorAñoChart').getContext('2d');
+    new Chart(ctxAño, {
+        type: 'bar',
+        data: {
+            labels: [{% for año, _ in consultas_por_año %}'{{ año }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Consultas',
+                data: [{% for _, cantidad in consultas_por_año %}{{ cantidad }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                borderColor: 'rgba(78, 115, 223, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+    {% endif %}
+</script>
+{% endblock %}
+{% endblock %}

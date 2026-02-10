@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Perfil - GineCare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0">
+                <h4 class="mb-0"><i class="bi bi-pencil text-primary me-2"></i>Editar Perfil</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('editar_perfil') }}">
+                    <!-- Datos de Contacto -->
+                    <h6 class="text-muted mb-3">Datos de Contacto</h6>
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                   value="{{ paciente.telefono or '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion" 
+                                   value="{{ paciente.direccion or '' }}">
+                        </div>
+                    </div>
+                    
+                    <!-- Datos Médicos -->
+                    <h6 class="text-muted mb-3">Datos Médicos</h6>
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <label for="tipo_sangre" class="form-label">Tipo de Sangre</label>
+                            <select class="form-select" id="tipo_sangre" name="tipo_sangre">
+                                <option value="">Seleccionar</option>
+                                {% for tipo in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] %}
+                                <option value="{{ tipo }}" {{ 'selected' if paciente.tipo_sangre == tipo }}>{{ tipo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="alergias" class="form-label">Alergias</label>
+                            <input type="text" class="form-control" id="alergias" name="alergias" 
+                                   value="{{ paciente.alergias or '' }}" 
+                                   placeholder="Medicamentos, alimentos, etc.">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="antecedentes_familiares" class="form-label">Antecedentes Familiares</label>
+                            <textarea class="form-control" id="antecedentes_familiares" name="antecedentes_familiares" 
+                                      rows="2" placeholder="Enfermedades relevantes en la familia">{{ paciente.antecedentes_familiares or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Datos Ginecológicos -->
+                    <h6 class="text-muted mb-3">Datos Ginecológicos</h6>
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_ultima_menstruacion" class="form-label">Fecha Última Menstruación (FUM)</label>
+                            <input type="date" class="form-control" id="fecha_ultima_menstruacion" 
+                                   name="fecha_ultima_menstruacion" 
+                                   value="{{ paciente.fecha_ultima_menstruacion.strftime('%Y-%m-%d') if paciente.fecha_ultima_menstruacion else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="metodo_anticonceptivo" class="form-label">Método Anticonceptivo</label>
+                            <select class="form-select" id="metodo_anticonceptivo" name="metodo_anticonceptivo">
+                                <option value="">Ninguno</option>
+                                {% for metodo in ['Píldoras anticonceptivas', 'DIU (Dispositivo intrauterino)', 'Implante subdérmico', 'Inyección hormonal', 'Preservativo', 'Parche anticonceptivo', 'Anillo vaginal', 'Ligadura de trompas', 'Otro'] %}
+                                <option value="{{ metodo }}" {{ 'selected' if paciente.metodo_anticonceptivo == metodo }}>{{ metodo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Antecedentes Obstétricos -->
+                    <h6 class="text-muted mb-3">Antecedentes Obstétricos</h6>
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <label for="embarazos_previos" class="form-label">Embarazos</label>
+                            <input type="number" class="form-control" id="embarazos_previos" 
+                                   name="embarazos_previos" min="0" 
+                                   value="{{ paciente.embarazos_previos or 0 }}">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="partos" class="form-label">Partos</label>
+                            <input type="number" class="form-control" id="partos" 
+                                   name="partos" min="0" 
+                                   value="{{ paciente.partos or 0 }}">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="cesareas" class="form-label">Cesáreas</label>
+                            <input type="number" class="form-control" id="cesareas" 
+                                   name="cesareas" min="0" 
+                                   value="{{ paciente.cesareas or 0 }}">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="abortos" class="form-label">Abortos</label>
+                            <input type="number" class="form-control" id="abortos" 
+                                   name="abortos" min="0" 
+                                   value="{{ paciente.abortos or 0 }}">
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('mi_perfil') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-2"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

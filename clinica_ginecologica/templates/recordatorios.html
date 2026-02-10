@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Recordatorios - GineCare{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Mis Recordatorios</h2>
+        <p class="text-muted mb-0">Gestiona tus recordatorios de salud</p>
+    </div>
+    <a href="{{ url_for('nuevo_recordatorio') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i> Nuevo Recordatorio
+    </a>
+</div>
+
+{% if recordatorios %}
+<div class="row g-4">
+    {% for recordatorio in recordatorios %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 {% if recordatorio.estado == 'completado' %}opacity-75{% endif %}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <span class="badge bg-{{ 'primary' if recordatorio.tipo == 'cita' else 'success' if recordatorio.tipo == 'medicamento' else 'info' if recordatorio.tipo == 'estudio' else 'warning' }}-soft text-{{ 'primary' if recordatorio.tipo == 'cita' else 'success' if recordatorio.tipo == 'medicamento' else 'info' if recordatorio.tipo == 'estudio' else 'warning' }}">
+                        <i class="bi bi-{{ 'calendar-check' if recordatorio.tipo == 'cita' else 'capsule' if recordatorio.tipo == 'medicamento' else 'file-earmark-medical' if recordatorio.tipo == 'estudio' else 'bell' }} me-1"></i>
+                        {{ recordatorio.tipo|capitalize }}
+                    </span>
+                    {% if recordatorio.estado == 'completado' %}
+                    <span class="badge bg-secondary">Completado</span>
+                    {% endif %}
+                </div>
+                
+                <h5 class="card-title {% if recordatorio.estado == 'completado' %}text-decoration-line-through{% endif %}">
+                    {{ recordatorio.titulo }}
+                </h5>
+                
+                {% if recordatorio.descripcion %}
+                <p class="text-muted small mb-3">{{ recordatorio.descripcion }}</p>
+                {% endif %}
+                
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-clock text-primary me-2"></i>
+                    <span>{{ recordatorio.fecha_recordatorio.strftime('%d/%m/%Y %H:%M') }}</span>
+                </div>
+                
+                {% if recordatorio.estado != 'completado' %}
+                <form action="{{ url_for('completar_recordatorio', recordatorio_id=recordatorio.id) }}" method="POST">
+                    <button type="submit" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-check-lg me-1"></i> Marcar como completado
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5">
+        <i class="bi bi-bell-slash text-muted" style="font-size: 4rem;"></i>
+        <h4 class="mt-3">Sin recordatorios</h4>
+        <p class="text-muted mb-4">Crea recordatorios para no olvidar tus citas y controles</p>
+        <a href="{{ url_for('nuevo_recordatorio') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i> Crear Recordatorio
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

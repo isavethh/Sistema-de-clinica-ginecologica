@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Consulta - GineCare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="bi bi-journal-medical text-success me-2"></i>
+                    Registro de Consulta
+                </h4>
+                <span class="text-muted">{{ historial.fecha_consulta.strftime('%d de %B de %Y') }}</span>
+            </div>
+            <div class="card-body p-4">
+                <!-- Información General -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label class="text-muted small">Tipo de Consulta</label>
+                        <p class="mb-0 fw-medium">{{ historial.tipo_consulta or 'General' }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="text-muted small">Médico</label>
+                        <p class="mb-0">{{ historial.medico.nombre_completo }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="text-muted small">Hora</label>
+                        <p class="mb-0">{{ historial.fecha_consulta.strftime('%H:%M') }}</p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <!-- Motivo y Síntomas -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-2">
+                            <i class="bi bi-chat-text me-1"></i> Motivo de Consulta
+                        </h6>
+                        <p class="mb-0">{{ historial.motivo_consulta or 'No especificado' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-2">
+                            <i class="bi bi-list-check me-1"></i> Síntomas
+                        </h6>
+                        <p class="mb-0">{{ historial.sintomas or 'No registrados' }}</p>
+                    </div>
+                </div>
+                
+                <!-- Signos Vitales -->
+                {% if historial.peso or historial.talla or historial.presion_arterial or historial.temperatura %}
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="text-primary mb-3">
+                            <i class="bi bi-heart-pulse me-1"></i> Signos Vitales
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-3 text-center">
+                                <span class="d-block fs-4 fw-bold text-primary">{{ historial.peso or '-' }}</span>
+                                <small class="text-muted">Peso (kg)</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <span class="d-block fs-4 fw-bold text-primary">{{ historial.talla or '-' }}</span>
+                                <small class="text-muted">Talla (cm)</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <span class="d-block fs-4 fw-bold text-primary">{{ historial.presion_arterial or '-' }}</span>
+                                <small class="text-muted">Presión Arterial</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <span class="d-block fs-4 fw-bold text-primary">{{ historial.temperatura or '-' }}°</span>
+                                <small class="text-muted">Temperatura</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Exploración Física -->
+                {% if historial.exploracion_fisica %}
+                <div class="mb-4">
+                    <h6 class="text-primary mb-2">
+                        <i class="bi bi-search me-1"></i> Exploración Física
+                    </h6>
+                    <p class="mb-0">{{ historial.exploracion_fisica }}</p>
+                </div>
+                {% endif %}
+                
+                <!-- Diagnóstico y Tratamiento -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-primary h-100">
+                            <div class="card-body">
+                                <h6 class="text-primary mb-2">
+                                    <i class="bi bi-clipboard2-pulse me-1"></i> Diagnóstico
+                                </h6>
+                                <p class="mb-0">{{ historial.diagnostico or 'No registrado' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-success h-100">
+                            <div class="card-body">
+                                <h6 class="text-success mb-2">
+                                    <i class="bi bi-capsule me-1"></i> Tratamiento
+                                </h6>
+                                <p class="mb-0">{{ historial.tratamiento or 'No registrado' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Estudios -->
+                {% if historial.estudios_solicitados or historial.resultados_estudios %}
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-2">
+                            <i class="bi bi-file-earmark-medical me-1"></i> Estudios Solicitados
+                        </h6>
+                        <p class="mb-0">{{ historial.estudios_solicitados or 'Ninguno' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-2">
+                            <i class="bi bi-file-earmark-check me-1"></i> Resultados de Estudios
+                        </h6>
+                        <p class="mb-0">{{ historial.resultados_estudios or 'Pendientes' }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Observaciones -->
+                {% if historial.observaciones %}
+                <div class="mb-4">
+                    <h6 class="text-primary mb-2">
+                        <i class="bi bi-sticky me-1"></i> Observaciones
+                    </h6>
+                    <p class="mb-0">{{ historial.observaciones }}</p>
+                </div>
+                {% endif %}
+                
+                <!-- Próxima Cita -->
+                {% if historial.proxima_cita %}
+                <div class="alert alert-info">
+                    <i class="bi bi-calendar-event me-2"></i>
+                    <strong>Próxima cita recomendada:</strong> 
+                    {{ historial.proxima_cita.strftime('%d de %B de %Y') }}
+                </div>
+                {% endif %}
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('historial_medico') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i> Volver al Historial
+                    </a>
+                    <button class="btn btn-outline-primary" onclick="window.print()">
+                        <i class="bi bi-printer me-2"></i> Imprimir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

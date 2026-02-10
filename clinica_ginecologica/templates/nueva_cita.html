@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Nueva Cita - GineCare{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0">
+                <h4 class="mb-0"><i class="bi bi-calendar-plus text-primary me-2"></i>Agendar Nueva Cita</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('nueva_cita') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="medico_id" class="form-label">Médico <span class="text-danger">*</span></label>
+                            <select class="form-select" id="medico_id" name="medico_id" required>
+                                <option value="">Selecciona un médico</option>
+                                {% for medico in medicos %}
+                                <option value="{{ medico.id }}">{{ medico.nombre_completo }} - {{ medico.especialidad }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="tipo_consulta" class="form-label">Tipo de consulta <span class="text-danger">*</span></label>
+                            <select class="form-select" id="tipo_consulta" name="tipo_consulta" required>
+                                <option value="">Selecciona el tipo</option>
+                                {% for tipo in tipos_consulta %}
+                                <option value="{{ tipo.nombre }}">{{ tipo.nombre }} ({{ tipo.duracion_minutos }} min)</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha" class="form-label">Fecha <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" 
+                                   min="{{ today }}" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="hora" class="form-label">Hora <span class="text-danger">*</span></label>
+                            <select class="form-select" id="hora" name="hora" required disabled>
+                                <option value="">Primero selecciona fecha y médico</option>
+                            </select>
+                            <small class="text-muted" id="horario-info"></small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="motivo" class="form-label">Motivo de la consulta</label>
+                        <textarea class="form-control" id="motivo" name="motivo" rows="3" 
+                                  placeholder="Describe brevemente el motivo de tu consulta (síntomas, dudas, etc.)"></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Nota:</strong> Recibirás un recordatorio un día antes de tu cita.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('mis_citas') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-2"></i> Agendar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Cargar horarios disponibles cuando se selecciona fecha y médico
+    const fechaInput = document.getElementById('fecha');
+    const medicoSelect = document.getElementById('medico_id');
+    const horaSelect = document.getElementById('hora');
+    const horarioInfo = document.getElementById('horario-info');
+    
+    // Establecer fecha mínima (hoy)
+    const today = new Date().toISOString().split('T')[0];
+    fechaInput.min = today;
+    
+    async function cargarHorarios() {
+        const fecha = fechaInput.value;
+        const medicoId = medicoSelect.value;
+        
+        if (!fecha || !medicoId) {
+            horaSelect.disabled = true;
+            horaSelect.innerHTML = '<option value="">Primero selecciona fecha y médico</option>';
+            return;
+        }
+        
+        horaSelect.disabled = true;
+        horaSelect.innerHTML = '<option value="">Cargando horarios...</option>';
+        
+        try {
+            const response = await fetch(`/api/horarios-disponibles?fecha=${fecha}&medico_id=${medicoId}`);
+            const data = await response.json();
+            
+            if (data.horarios && data.horarios.length > 0) {
+                horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+                data.horarios.forEach(hora => {
+                    horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
+                });
+                horaSelect.disabled = false;
+                horarioInfo.textContent = `${data.horarios.length} horarios disponibles`;
+            } else {
+                horaSelect.innerHTML = '<option value="">No hay horarios disponibles</option>';
+                horarioInfo.textContent = 'Intenta con otra fecha';
+            }
+        } catch (error) {
+            horaSelect.innerHTML = '<option value="">Error al cargar horarios</option>';
+            console.error('Error:', error);
+        }
+    }
+    
+    fechaInput.addEventListener('change', cargarHorarios);
+    medicoSelect.addEventListener('change', cargarHorarios);
+</script>
+{% endblock %}
+{% endblock %}
