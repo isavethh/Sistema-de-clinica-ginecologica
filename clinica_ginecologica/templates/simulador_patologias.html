@@ -1,0 +1,1018 @@
+{% extends "base.html" %}
+
+{% block title %}Simulador de Patologías - Clínica Ginecológica{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-microscope"></i> Simulador de Visualización de Patologías Combinadas</h2>
+            <p class="text-muted">Herramienta educativa para visualizar cómo se verían combinaciones de enfermedades ginecológicas</p>
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Nota:</strong> Esta herramienta es únicamente para fines educativos. Las imágenes son representaciones esquemáticas y no deben usarse para diagnóstico clínico.
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Panel de Selección de Condiciones -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-list-check"></i> Seleccionar Condiciones</h5>
+                </div>
+                <div class="card-body">
+                    <!-- VPH -->
+                    <div class="condicion-item mb-3 p-3 border rounded">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="vph_check" onchange="dibujarPatologias()">
+                            <label class="form-check-label fw-bold" for="vph_check">
+                                <i class="fas fa-virus text-danger"></i> VPH (Lesiones)
+                            </label>
+                        </div>
+                        <div class="slider-container" id="vph_slider_container" style="display:none;">
+                            <input type="range" class="form-range" id="vph_grado" min="1" max="4" value="1" oninput="dibujarPatologias()">
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>NIC I</span>
+                                <span>NIC II</span>
+                                <span>NIC III</span>
+                                <span>Carcinoma</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Infección Bacteriana -->
+                    <div class="condicion-item mb-3 p-3 border rounded">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="infeccion_check" onchange="dibujarPatologias()">
+                            <label class="form-check-label fw-bold" for="infeccion_check">
+                                <i class="fas fa-bacterium text-warning"></i> Vaginosis Bacteriana
+                            </label>
+                        </div>
+                        <div class="slider-container" id="infeccion_slider_container" style="display:none;">
+                            <input type="range" class="form-range" id="infeccion_grado" min="1" max="3" value="1" oninput="dibujarPatologias()">
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>Leve</span>
+                                <span>Moderada</span>
+                                <span>Severa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Candidiasis -->
+                    <div class="condicion-item mb-3 p-3 border rounded">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="candidiasis_check" onchange="dibujarPatologias()">
+                            <label class="form-check-label fw-bold" for="candidiasis_check">
+                                <i class="fas fa-disease text-light bg-secondary rounded px-1"></i> Candidiasis
+                            </label>
+                        </div>
+                        <div class="slider-container" id="candidiasis_slider_container" style="display:none;">
+                            <input type="range" class="form-range" id="candidiasis_grado" min="1" max="3" value="1" oninput="dibujarPatologias()">
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>Leve</span>
+                                <span>Moderada</span>
+                                <span>Severa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Herpes -->
+                    <div class="condicion-item mb-3 p-3 border rounded">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="herpes_check" onchange="dibujarPatologias()">
+                            <label class="form-check-label fw-bold" for="herpes_check">
+                                <i class="fas fa-circle text-danger"></i> Herpes Genital
+                            </label>
+                        </div>
+                        <div class="slider-container" id="herpes_slider_container" style="display:none;">
+                            <input type="range" class="form-range" id="herpes_grado" min="1" max="3" value="1" oninput="dibujarPatologias()">
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>Vesículas</span>
+                                <span>Activo</span>
+                                <span>Úlceras</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tricomoniasis -->
+                    <div class="condicion-item mb-3 p-3 border rounded">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="tricomoniasis_check" onchange="dibujarPatologias()">
+                            <label class="form-check-label fw-bold" for="tricomoniasis_check">
+                                <i class="fas fa-droplet text-success"></i> Tricomoniasis
+                            </label>
+                        </div>
+                        <div class="slider-container" id="tricomoniasis_slider_container" style="display:none;">
+                            <input type="range" class="form-range" id="tricomoniasis_grado" min="1" max="3" value="1" oninput="dibujarPatologias()">
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>Leve</span>
+                                <span>Moderada</span>
+                                <span>Severa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verrugas Genitales -->
+                    <div class="condicion-item mb-3 p-3 border rounded">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="verrugas_check" onchange="dibujarPatologias()">
+                            <label class="form-check-label fw-bold" for="verrugas_check">
+                                <i class="fas fa-circle-nodes text-secondary"></i> Verrugas Genitales (Condilomas)
+                            </label>
+                        </div>
+                        <div class="slider-container" id="verrugas_slider_container" style="display:none;">
+                            <input type="range" class="form-range" id="verrugas_grado" min="1" max="3" value="1" oninput="dibujarPatologias()">
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>Pocas</span>
+                                <span>Moderadas</span>
+                                <span>Extensas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Visualización -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-eye"></i> Visualización Cervical (Colposcopía Simulada)</h5>
+                    <div>
+                        <button class="btn btn-sm btn-outline-light me-2" onclick="guardarImagen()">
+                            <i class="fas fa-download"></i> Guardar
+                        </button>
+                        <button class="btn btn-sm btn-outline-light" onclick="limpiarTodo()">
+                            <i class="fas fa-eraser"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body text-center" style="background: #0d1117;">
+                    <canvas id="canvasPatologia" width="600" height="500" style="border-radius: 10px; max-width: 100%;"></canvas>
+                </div>
+            </div>
+
+            <!-- Leyenda -->
+            <div class="card shadow-sm mt-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-info-circle"></i> Leyenda de Hallazgos</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="leyenda">
+                        <div class="col-12 text-muted text-center">
+                            <i>Seleccione patologías para ver la leyenda</i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descripción Clínica -->
+            <div class="card shadow-sm mt-3">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="fas fa-stethoscope"></i> Descripción Clínica</h6>
+                </div>
+                <div class="card-body">
+                    <div id="descripcionClinica">
+                        <p class="text-muted text-center"><i>Seleccione patologías para ver la descripción clínica</i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .condicion-item {
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    .condicion-item:hover {
+        background-color: #e9ecef;
+    }
+    .condicion-item.active {
+        background-color: #e7f3ff;
+        border-color: #0d6efd !important;
+    }
+    #canvasPatologia {
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+    .leyenda-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    .leyenda-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        margin-right: 8px;
+        border: 1px solid #ccc;
+    }
+</style>
+
+<script>
+    const canvas = document.getElementById('canvasPatologia');
+    const ctx = canvas.getContext('2d');
+    
+    // Descripciones clínicas detalladas
+    const descripciones = {
+        vph: [
+            'NIC I: Displasia leve, células anormales en tercio inferior del epitelio. Zona de transformación con cambios acetoblancos leves, bordes difusos.',
+            'NIC II: Displasia moderada, afecta 2/3 del epitelio. Áreas acetoblancas más densas y opacas con bordes más definidos, patrón de mosaico fino.',
+            'NIC III: Displasia severa/carcinoma in situ. Epitelio completamente anormal, mosaico grueso, puntillado grueso, vasos atípicos iniciales.',
+            'Carcinoma invasivo: Masa irregular exofítica o ulcerada, vasos atípicos prominentes en sacacorchos, zonas de necrosis, sangrado fácil al contacto.'
+        ],
+        infeccion: [
+            'Vaginosis leve: Flujo grisáceo homogéneo escaso adherido a paredes, pH >4.5, test de aminas positivo leve, pocas células clave en microscopía.',
+            'Vaginosis moderada: Flujo grisáceo moderado con olor a pescado característico, eritema leve de mucosa vaginal, células clave abundantes.',
+            'Vaginosis severa: Flujo abundante grisáceo maloliente, inflamación marcada de mucosa, posible cervicitis mucopurulenta asociada.'
+        ],
+        candidiasis: [
+            'Candidiasis leve: Placas blanquecinas pequeñas dispersas tipo "leche cortada", eritema vulvar leve, prurito moderado, flujo escaso.',
+            'Candidiasis moderada: Placas blancas confluentes tipo "requesón" adheridas a mucosa, eritema y edema vulvovaginal moderado, fisuras superficiales.',
+            'Candidiasis severa: Placas extensas gruesas adherentes difíciles de desprender, eritema intenso, edema marcado, fisuras profundas, excoriaciones.'
+        ],
+        herpes: [
+            'Fase vesicular: Vesículas agrupadas de 2-3mm con contenido claro seroso sobre base eritematosa, muy pruriginosas, adenopatía inguinal.',
+            'Fase activa: Vesículas rotas formando erosiones superficiales húmedas, muy dolorosas al contacto, posible coalescencia de lesiones.',
+            'Fase ulcerativa: Úlceras coalescentes dolorosas con bordes irregulares geográficos, fondo grisáceo, halo eritematoso, pueden sobreinfectarse.'
+        ],
+        tricomoniasis: [
+            'Tricomoniasis leve: Flujo amarillento escaso ligeramente espumoso, petequias cervicales aisladas, pH >4.5, trofozoítos escasos.',
+            'Tricomoniasis moderada: Flujo espumoso amarillo-verdoso abundante, cérvix en "fresa" característico (colpitis macularis), prurito e irritación.',
+            'Tricomoniasis severa: Inflamación intensa vulvovaginal, petequias extensas confluentes, flujo purulento espumoso abundante, dispareunia.'
+        ],
+        verrugas: [
+            'Condilomas escasos: Pocas lesiones papilomatosas aisladas de 1-5mm, superficie irregular verrugosa, color piel o rosado, distribución focal.',
+            'Condilomas moderados: Múltiples lesiones verrugosas de varios tamaños, algunas confluentes en placas, aspecto digitiforme o en coliflor pequeño.',
+            'Condilomas extensos: Lesiones masivas en coliflor extensas, pueden obstruir parcialmente introito vaginal, posible maceración y sobreinfección.'
+        ]
+    };
+
+    function dibujarPatologias() {
+        // Actualizar visibilidad de sliders
+        const condiciones = ['vph', 'infeccion', 'candidiasis', 'herpes', 'tricomoniasis', 'verrugas'];
+        condiciones.forEach(cond => {
+            const check = document.getElementById(`${cond}_check`);
+            const slider = document.getElementById(`${cond}_slider_container`);
+            const item = check.closest('.condicion-item');
+            if (check.checked) {
+                slider.style.display = 'block';
+                item.classList.add('active');
+            } else {
+                slider.style.display = 'none';
+                item.classList.remove('active');
+            }
+        });
+
+        // Limpiar canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Fondo oscuro (como colposcopía)
+        ctx.fillStyle = '#0a0a0f';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Dibujar cérvix base realista
+        dibujarCervixBase();
+        
+        // Aplicar patologías en orden de capas
+        if (document.getElementById('infeccion_check').checked) {
+            const grado = parseInt(document.getElementById('infeccion_grado').value);
+            dibujarInfeccion(grado);
+        }
+        
+        if (document.getElementById('tricomoniasis_check').checked) {
+            const grado = parseInt(document.getElementById('tricomoniasis_grado').value);
+            dibujarTricomoniasis(grado);
+        }
+        
+        if (document.getElementById('vph_check').checked) {
+            const grado = parseInt(document.getElementById('vph_grado').value);
+            dibujarVPH(grado);
+        }
+        
+        if (document.getElementById('candidiasis_check').checked) {
+            const grado = parseInt(document.getElementById('candidiasis_grado').value);
+            dibujarCandidiasis(grado);
+        }
+        
+        if (document.getElementById('herpes_check').checked) {
+            const grado = parseInt(document.getElementById('herpes_grado').value);
+            dibujarHerpes(grado);
+        }
+        
+        if (document.getElementById('verrugas_check').checked) {
+            const grado = parseInt(document.getElementById('verrugas_grado').value);
+            dibujarVerrugas(grado);
+        }
+        
+        // Actualizar leyenda y descripción
+        actualizarLeyenda();
+        actualizarDescripcion();
+    }
+
+    function dibujarCervixBase() {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        // Viñeteado circular (efecto colposcopio)
+        const gradVignette = ctx.createRadialGradient(cx, cy, 100, cx, cy, 300);
+        gradVignette.addColorStop(0, 'transparent');
+        gradVignette.addColorStop(0.7, 'rgba(0,0,0,0.3)');
+        gradVignette.addColorStop(1, 'rgba(0,0,0,0.95)');
+        
+        // Fondo vaginal (paredes vaginales con pliegues)
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 280, 240, 0, 0, Math.PI * 2);
+        const gradVagina = ctx.createRadialGradient(cx, cy, 80, cx, cy, 280);
+        gradVagina.addColorStop(0, '#e8a0a0');
+        gradVagina.addColorStop(0.3, '#d88888');
+        gradVagina.addColorStop(0.6, '#b06060');
+        gradVagina.addColorStop(1, '#301515');
+        ctx.fillStyle = gradVagina;
+        ctx.fill();
+        
+        // Pliegues vaginales (rugae)
+        for (let i = 0; i < 24; i++) {
+            const angle = (i / 24) * Math.PI * 2;
+            const innerR = 140;
+            const outerR = 250;
+            
+            ctx.beginPath();
+            ctx.moveTo(cx + Math.cos(angle) * innerR, cy + Math.sin(angle) * innerR * 0.85);
+            
+            // Curva del pliegue
+            const midR = (innerR + outerR) / 2;
+            const controlAngle = angle + 0.08;
+            ctx.quadraticCurveTo(
+                cx + Math.cos(controlAngle) * midR * 1.05,
+                cy + Math.sin(controlAngle) * midR * 0.85,
+                cx + Math.cos(angle) * outerR,
+                cy + Math.sin(angle) * outerR * 0.85
+            );
+            
+            ctx.strokeStyle = `rgba(80, 30, 30, ${0.2 + Math.random() * 0.15})`;
+            ctx.lineWidth = 1.5 + Math.random();
+            ctx.stroke();
+        }
+        
+        // Cérvix principal con textura realista
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 130, 120, 0, 0, Math.PI * 2);
+        const gradCervix = ctx.createRadialGradient(cx - 20, cy - 15, 10, cx, cy, 130);
+        gradCervix.addColorStop(0, '#ffcccc');
+        gradCervix.addColorStop(0.2, '#f5b0b0');
+        gradCervix.addColorStop(0.5, '#e89090');
+        gradCervix.addColorStop(0.8, '#d07070');
+        gradCervix.addColorStop(1, '#b85858');
+        ctx.fillStyle = gradCervix;
+        ctx.fill();
+        
+        // Borde del cérvix (labio anterior y posterior)
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 130, 120, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(150, 60, 60, 0.4)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        // Zona de transformación (unión escamocolumnar) - anillo característico
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 50, 42, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 200, 200, 0.3)';
+        ctx.lineWidth = 12;
+        ctx.stroke();
+        
+        // Epitelio columnar (más rojo, cerca del orificio)
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 45, 38, 0, 0, Math.PI * 2);
+        const gradColumnar = ctx.createRadialGradient(cx, cy, 15, cx, cy, 45);
+        gradColumnar.addColorStop(0, '#d05050');
+        gradColumnar.addColorStop(0.5, '#c04545');
+        gradColumnar.addColorStop(1, '#b03535');
+        ctx.fillStyle = gradColumnar;
+        ctx.fill();
+        
+        // Orificio cervical externo (OCE)
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 22, 10, 0, 0, Math.PI * 2);
+        const gradOCE = ctx.createRadialGradient(cx, cy, 0, cx, cy, 22);
+        gradOCE.addColorStop(0, '#1a0505');
+        gradOCE.addColorStop(0.5, '#2d0f0f');
+        gradOCE.addColorStop(1, '#4a2020');
+        ctx.fillStyle = gradOCE;
+        ctx.fill();
+        
+        // Borde del orificio
+        ctx.strokeStyle = 'rgba(100, 40, 40, 0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        
+        // Vasos sanguíneos normales (finos, regulares)
+        for (let i = 0; i < 30; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const startR = 55 + Math.random() * 60;
+            const length = 15 + Math.random() * 25;
+            
+            const x1 = cx + Math.cos(angle) * startR;
+            const y1 = cy + Math.sin(angle) * startR * 0.9;
+            const x2 = cx + Math.cos(angle) * (startR + length);
+            const y2 = cy + Math.sin(angle) * (startR + length) * 0.9;
+            
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            
+            // Curva suave del vaso
+            const midX = (x1 + x2) / 2 + (Math.random() - 0.5) * 8;
+            const midY = (y1 + y2) / 2 + (Math.random() - 0.5) * 6;
+            ctx.quadraticCurveTo(midX, midY, x2, y2);
+            
+            ctx.strokeStyle = `rgba(180, 60, 60, ${0.15 + Math.random() * 0.1})`;
+            ctx.lineWidth = 0.5 + Math.random() * 0.5;
+            ctx.stroke();
+        }
+        
+        // Aplicar viñeteado
+        ctx.fillStyle = gradVignette;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Texto informativo
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.font = '11px Arial';
+        ctx.fillText('Vista colposcópica simulada', 10, 20);
+    }
+
+    function dibujarVPH(grado) {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        // Zonas acetoblancas (patognomónicas de VPH en colposcopía con ácido acético)
+        const numZonas = 2 + grado;
+        
+        for (let i = 0; i < numZonas; i++) {
+            const angle = (i / numZonas) * Math.PI * 2 + Math.random() * 0.3;
+            const dist = 55 + Math.random() * 35;
+            const x = cx + Math.cos(angle) * dist;
+            const y = cy + Math.sin(angle) * dist * 0.85;
+            const sizeX = 18 + grado * 10 + Math.random() * 15;
+            const sizeY = sizeX * (0.6 + Math.random() * 0.3);
+            
+            // Zona acetoblanca con gradiente
+            ctx.beginPath();
+            ctx.ellipse(x, y, sizeX, sizeY, angle * 0.3, 0, Math.PI * 2);
+            
+            const intensity = 0.5 + grado * 0.12;
+            const gradAceto = ctx.createRadialGradient(x, y, 0, x, y, sizeX);
+            gradAceto.addColorStop(0, `rgba(255, 255, 245, ${intensity})`);
+            gradAceto.addColorStop(0.6, `rgba(255, 250, 235, ${intensity * 0.8})`);
+            gradAceto.addColorStop(1, `rgba(240, 230, 210, ${intensity * 0.4})`);
+            ctx.fillStyle = gradAceto;
+            ctx.fill();
+            
+            // Borde de la lesión (más definido en grados altos)
+            if (grado >= 2) {
+                ctx.strokeStyle = `rgba(180, 160, 140, ${0.3 + grado * 0.1})`;
+                ctx.lineWidth = grado >= 3 ? 2 : 1;
+                ctx.stroke();
+            }
+        }
+        
+        // Patrón de mosaico (característico de NIC II-III)
+        if (grado >= 2) {
+            const numMosaicos = grado * 4;
+            for (let i = 0; i < numMosaicos; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = 50 + Math.random() * 40;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r * 0.85;
+                const size = 4 + grado * 2;
+                
+                // Patrón de mosaico (cuadrícula)
+                ctx.beginPath();
+                ctx.rect(x - size/2, y - size/2, size, size);
+                ctx.strokeStyle = `rgba(160, 70, 70, ${0.3 + grado * 0.1})`;
+                ctx.lineWidth = grado >= 3 ? 1.5 : 1;
+                ctx.stroke();
+            }
+        }
+        
+        // Puntillado (vasos en punto, característico de displasia)
+        if (grado >= 2) {
+            const numPuntos = grado * 6;
+            for (let i = 0; i < numPuntos; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = 45 + Math.random() * 50;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r * 0.85;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 1.5 + grado * 0.5, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(180, 50, 50, ${0.5 + grado * 0.1})`;
+                ctx.fill();
+            }
+        }
+        
+        // Vasos atípicos (grado alto - NIC III y carcinoma)
+        if (grado >= 3) {
+            const numVasos = (grado - 2) * 4;
+            for (let i = 0; i < numVasos; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = 40 + Math.random() * 50;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r * 0.85;
+                
+                // Vaso en sacacorchos (atípico)
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                for (let j = 0; j < 4; j++) {
+                    const nx = x + Math.sin(j * 1.5) * 6;
+                    const ny = y + j * 5;
+                    ctx.lineTo(nx, ny);
+                }
+                ctx.strokeStyle = 'rgba(150, 30, 30, 0.7)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Punto terminal del vaso
+                ctx.beginPath();
+                ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(130, 20, 20, 0.8)';
+                ctx.fill();
+            }
+        }
+        
+        // Necrosis y úlcera (carcinoma)
+        if (grado === 4) {
+            // Masa tumoral irregular
+            ctx.beginPath();
+            const tumorX = cx + 25;
+            const tumorY = cy - 15;
+            
+            ctx.moveTo(tumorX + 30, tumorY);
+            for (let i = 0; i < 12; i++) {
+                const a = (i / 12) * Math.PI * 2;
+                const r = 25 + Math.random() * 10;
+                ctx.lineTo(tumorX + Math.cos(a) * r, tumorY + Math.sin(a) * r * 0.8);
+            }
+            ctx.closePath();
+            
+            const gradTumor = ctx.createRadialGradient(tumorX, tumorY, 5, tumorX, tumorY, 30);
+            gradTumor.addColorStop(0, 'rgba(60, 30, 30, 0.8)');
+            gradTumor.addColorStop(0.5, 'rgba(100, 50, 50, 0.7)');
+            gradTumor.addColorStop(1, 'rgba(140, 70, 70, 0.5)');
+            ctx.fillStyle = gradTumor;
+            ctx.fill();
+            
+            // Zona de necrosis central
+            ctx.beginPath();
+            ctx.ellipse(tumorX, tumorY, 10, 8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(40, 20, 20, 0.9)';
+            ctx.fill();
+        }
+    }
+
+    function dibujarInfeccion(grado) {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        // Eritema difuso (enrojecimiento de la mucosa)
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 140, 130, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 90, 90, ${0.08 + grado * 0.04})`;
+        ctx.fill();
+        
+        // Flujo grisáceo homogéneo
+        const numParticulas = 30 + grado * 25;
+        for (let i = 0; i < numParticulas; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const r = Math.random() * 140;
+            const x = cx + Math.cos(angle) * r;
+            const y = cy + Math.sin(angle) * r * 0.9;
+            
+            ctx.beginPath();
+            const size = 2 + Math.random() * 3;
+            ctx.ellipse(x, y, size, size * 0.6, Math.random() * Math.PI, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(160, 160, 150, ${0.25 + grado * 0.1 + Math.random() * 0.1})`;
+            ctx.fill();
+        }
+        
+        // Flujo adherido a paredes en grados mayores
+        if (grado >= 2) {
+            for (let i = 0; i < grado * 3; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = 120 + Math.random() * 30;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r * 0.85;
+                
+                ctx.beginPath();
+                ctx.ellipse(x, y, 15 + Math.random() * 10, 8 + Math.random() * 5, angle, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(150, 150, 140, ${0.3 + grado * 0.1})`;
+                ctx.fill();
+            }
+        }
+    }
+
+    function dibujarCandidiasis(grado) {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        // Eritema de fondo
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 150, 140, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 80, 80, ${0.05 + grado * 0.03})`;
+        ctx.fill();
+        
+        // Placas blancas tipo "requesón"
+        const numPlacas = 4 + grado * 4;
+        
+        for (let i = 0; i < numPlacas; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const r = 40 + Math.random() * 100;
+            const x = cx + Math.cos(angle) * r;
+            const y = cy + Math.sin(angle) * r * 0.85;
+            
+            // Placa blanca grumosa irregular
+            ctx.beginPath();
+            const baseSize = 10 + grado * 6 + Math.random() * 8;
+            
+            // Forma muy irregular (tipo requesón)
+            ctx.moveTo(x + baseSize, y);
+            const numPuntos = 10 + Math.floor(Math.random() * 6);
+            for (let j = 0; j <= numPuntos; j++) {
+                const a = (j / numPuntos) * Math.PI * 2;
+                const variation = 0.5 + Math.random() * 0.7;
+                const irregularity = Math.random() * 5;
+                ctx.lineTo(
+                    x + Math.cos(a) * baseSize * variation + irregularity,
+                    y + Math.sin(a) * baseSize * 0.7 * variation + irregularity * 0.5
+                );
+            }
+            ctx.closePath();
+            
+            // Gradiente para dar volumen a la placa
+            const gradPlaca = ctx.createRadialGradient(x - 3, y - 3, 0, x, y, baseSize);
+            gradPlaca.addColorStop(0, `rgba(255, 255, 255, ${0.85 + grado * 0.05})`);
+            gradPlaca.addColorStop(0.5, `rgba(250, 250, 245, ${0.8 + grado * 0.05})`);
+            gradPlaca.addColorStop(1, `rgba(235, 235, 225, ${0.6 + grado * 0.1})`);
+            ctx.fillStyle = gradPlaca;
+            ctx.fill();
+            
+            // Sombra sutil
+            ctx.strokeStyle = 'rgba(200, 200, 190, 0.4)';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+            
+            // Grúmulos dentro de la placa (textura)
+            for (let k = 0; k < 3 + grado; k++) {
+                const gx = x + (Math.random() - 0.5) * baseSize * 0.8;
+                const gy = y + (Math.random() - 0.5) * baseSize * 0.5;
+                ctx.beginPath();
+                ctx.arc(gx, gy, 1 + Math.random() * 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(245, 245, 240, 0.9)';
+                ctx.fill();
+            }
+        }
+        
+        // Fisuras en grado severo
+        if (grado === 3) {
+            for (let i = 0; i < 3; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = 100 + Math.random() * 50;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r * 0.85;
+                
+                ctx.beginPath();
+                ctx.moveTo(x - 8, y);
+                ctx.lineTo(x + 8, y + 3);
+                ctx.strokeStyle = 'rgba(180, 50, 50, 0.6)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+    }
+
+    function dibujarHerpes(grado) {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        // Lesiones en la periferia (vulva/vagina)
+        const numLesiones = 3 + grado * 2;
+        
+        for (let i = 0; i < numLesiones; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const r = 110 + Math.random() * 70;
+            const x = cx + Math.cos(angle) * r;
+            const y = cy + Math.sin(angle) * r * 0.85;
+            const size = 5 + grado * 2 + Math.random() * 3;
+            
+            // Base eritematosa (halo rojo)
+            ctx.beginPath();
+            ctx.arc(x, y, size + 4, 0, Math.PI * 2);
+            const gradBase = ctx.createRadialGradient(x, y, size, x, y, size + 4);
+            gradBase.addColorStop(0, 'rgba(255, 80, 80, 0.6)');
+            gradBase.addColorStop(1, 'rgba(255, 80, 80, 0)');
+            ctx.fillStyle = gradBase;
+            ctx.fill();
+            
+            if (grado === 1) {
+                // Vesícula intacta con contenido seroso claro
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                const gradVes = ctx.createRadialGradient(x - size/3, y - size/3, 0, x, y, size);
+                gradVes.addColorStop(0, 'rgba(255, 255, 230, 0.95)');
+                gradVes.addColorStop(0.3, 'rgba(255, 245, 200, 0.9)');
+                gradVes.addColorStop(0.7, 'rgba(240, 220, 170, 0.85)');
+                gradVes.addColorStop(1, 'rgba(220, 180, 130, 0.8)');
+                ctx.fillStyle = gradVes;
+                ctx.fill();
+                
+                // Reflejo de luz (aspecto de vesícula)
+                ctx.beginPath();
+                ctx.arc(x - size/3, y - size/3, size/4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.fill();
+                
+                // Borde de la vesícula
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(200, 160, 100, 0.7)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+            } else if (grado === 2) {
+                // Erosión (vesícula rota)
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                const gradEros = ctx.createRadialGradient(x, y, 0, x, y, size);
+                gradEros.addColorStop(0, 'rgba(220, 80, 80, 0.9)');
+                gradEros.addColorStop(0.6, 'rgba(200, 60, 60, 0.85)');
+                gradEros.addColorStop(1, 'rgba(180, 50, 50, 0.7)');
+                ctx.fillStyle = gradEros;
+                ctx.fill();
+                
+                // Borde húmedo
+                ctx.strokeStyle = 'rgba(150, 40, 40, 0.8)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                
+            } else {
+                // Úlcera profunda
+                ctx.beginPath();
+                
+                // Forma irregular de la úlcera
+                ctx.moveTo(x + size, y);
+                for (let j = 0; j < 8; j++) {
+                    const a = (j / 8) * Math.PI * 2;
+                    const r = size * (0.8 + Math.random() * 0.4);
+                    ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+                }
+                ctx.closePath();
+                
+                const gradUlc = ctx.createRadialGradient(x, y, 0, x, y, size);
+                gradUlc.addColorStop(0, 'rgba(80, 30, 30, 0.95)');
+                gradUlc.addColorStop(0.4, 'rgba(120, 50, 50, 0.9)');
+                gradUlc.addColorStop(0.8, 'rgba(160, 60, 60, 0.85)');
+                gradUlc.addColorStop(1, 'rgba(180, 70, 70, 0.7)');
+                ctx.fillStyle = gradUlc;
+                ctx.fill();
+                
+                // Borde necrótico/fibrinoso
+                ctx.strokeStyle = 'rgba(100, 80, 60, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Centro grisáceo (fibrina)
+                ctx.beginPath();
+                ctx.arc(x, y, size * 0.4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(180, 170, 160, 0.6)';
+                ctx.fill();
+            }
+        }
+    }
+
+    function dibujarTricomoniasis(grado) {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        // Eritema difuso intenso
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 135, 125, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 70, 70, ${0.1 + grado * 0.05})`;
+        ctx.fill();
+        
+        // "Cérvix en fresa" - petequias (colpitis macularis)
+        const numPetequias = 15 + grado * 20;
+        
+        for (let i = 0; i < numPetequias; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const r = 30 + Math.random() * 95;
+            const x = cx + Math.cos(angle) * r;
+            const y = cy + Math.sin(angle) * r * 0.88;
+            const size = 1 + Math.random() * 2;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(200, 30, 30, ${0.65 + grado * 0.1})`;
+            ctx.fill();
+            
+            // Pequeño halo
+            ctx.beginPath();
+            ctx.arc(x, y, size + 1, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(180, 40, 40, 0.3)`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        }
+        
+        // Flujo espumoso amarillo-verdoso
+        const numBurbujas = 20 + grado * 15;
+        for (let i = 0; i < numBurbujas; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const r = 60 + Math.random() * 120;
+            const x = cx + Math.cos(angle) * r;
+            const y = cy + Math.sin(angle) * r * 0.85;
+            const size = 2 + Math.random() * 4;
+            
+            // Burbuja
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            const gradBurb = ctx.createRadialGradient(x - size/3, y - size/3, 0, x, y, size);
+            gradBurb.addColorStop(0, `rgba(200, 220, 120, ${0.3 + grado * 0.1})`);
+            gradBurb.addColorStop(0.5, `rgba(180, 200, 100, ${0.25 + grado * 0.08})`);
+            gradBurb.addColorStop(1, `rgba(160, 180, 80, ${0.15 + grado * 0.05})`);
+            ctx.fillStyle = gradBurb;
+            ctx.fill();
+            
+            // Reflejo de burbuja
+            ctx.beginPath();
+            ctx.arc(x - size/3, y - size/3, size/4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(150, 170, 70, 0.4)';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        }
+    }
+
+    function dibujarVerrugas(grado) {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        // Condilomas (verrugas) - principalmente en periferia
+        const numVerrugas = 2 + grado * 2;
+        
+        for (let i = 0; i < numVerrugas; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const r = 90 + Math.random() * 90;
+            const x = cx + Math.cos(angle) * r;
+            const y = cy + Math.sin(angle) * r * 0.85;
+            
+            // Tamaño de la verruga/grupo
+            const baseSize = 12 + grado * 8 + Math.random() * 10;
+            const numProtuberancias = 6 + grado * 4;
+            
+            // Dibujar múltiples protuberancias (aspecto de coliflor)
+            for (let j = 0; j < numProtuberancias; j++) {
+                const px = x + (Math.random() - 0.5) * baseSize;
+                const py = y + (Math.random() - 0.5) * baseSize * 0.7;
+                const psize = 3 + Math.random() * 5;
+                
+                ctx.beginPath();
+                ctx.arc(px, py, psize, 0, Math.PI * 2);
+                
+                // Gradiente para dar volumen
+                const gradVer = ctx.createRadialGradient(px - psize/3, py - psize/3, 0, px, py, psize);
+                gradVer.addColorStop(0, '#e8d0c0');
+                gradVer.addColorStop(0.3, '#d8c0b0');
+                gradVer.addColorStop(0.7, '#c8a898');
+                gradVer.addColorStop(1, '#a88878');
+                ctx.fillStyle = gradVer;
+                ctx.fill();
+                
+                // Borde sutil
+                ctx.strokeStyle = 'rgba(120, 90, 70, 0.4)';
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+            
+            // Proyecciones digitiformes en grados mayores
+            if (grado >= 2) {
+                for (let k = 0; k < grado * 2; k++) {
+                    const dx = x + (Math.random() - 0.5) * baseSize * 0.8;
+                    const dy = y - baseSize * 0.3 - Math.random() * 8;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(dx, y);
+                    ctx.quadraticCurveTo(dx + (Math.random() - 0.5) * 4, dy + 5, dx, dy);
+                    ctx.strokeStyle = '#c8a898';
+                    ctx.lineWidth = 2 + Math.random();
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                    
+                    // Punta redondeada
+                    ctx.beginPath();
+                    ctx.arc(dx, dy, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = '#d8b8a8';
+                    ctx.fill();
+                }
+            }
+        }
+    }
+
+    function actualizarLeyenda() {
+        const leyendaDiv = document.getElementById('leyenda');
+        let html = '<div class="row">';
+        let haySeleccion = false;
+        
+        const items = [
+            { id: 'vph', nombre: 'VPH/Displasia', color: 'rgba(255, 255, 240, 0.9)', desc: 'Zonas acetoblancas, mosaico' },
+            { id: 'infeccion', nombre: 'Vaginosis', color: 'rgba(160, 160, 150, 0.8)', desc: 'Flujo grisáceo homogéneo' },
+            { id: 'candidiasis', nombre: 'Candidiasis', color: '#ffffff', desc: 'Placas blancas "requesón"' },
+            { id: 'herpes', nombre: 'Herpes', color: 'rgba(255, 200, 150, 0.9)', desc: 'Vesículas/erosiones/úlceras' },
+            { id: 'tricomoniasis', nombre: 'Tricomoniasis', color: 'rgba(200, 30, 30, 0.8)', desc: 'Cérvix en fresa, petequias' },
+            { id: 'verrugas', nombre: 'Condilomas', color: '#d8c0b0', desc: 'Verrugas en coliflor' }
+        ];
+        
+        items.forEach(item => {
+            if (document.getElementById(`${item.id}_check`).checked) {
+                haySeleccion = true;
+                html += `
+                    <div class="col-md-4 col-6 mb-2">
+                        <div class="leyenda-item">
+                            <div class="leyenda-color" style="background: ${item.color};"></div>
+                            <div>
+                                <strong>${item.nombre}</strong><br>
+                                <small class="text-muted">${item.desc}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        
+        html += '</div>';
+        
+        if (!haySeleccion) {
+            leyendaDiv.innerHTML = '<div class="col-12 text-muted text-center"><i>Seleccione patologías para ver la leyenda</i></div>';
+        } else {
+            leyendaDiv.innerHTML = html;
+        }
+    }
+
+    function actualizarDescripcion() {
+        const descDiv = document.getElementById('descripcionClinica');
+        let html = '';
+        let haySeleccion = false;
+        
+        const condiciones = ['vph', 'infeccion', 'candidiasis', 'herpes', 'tricomoniasis', 'verrugas'];
+        const nombres = {
+            vph: 'VPH / Neoplasia Intraepitelial Cervical',
+            infeccion: 'Vaginosis Bacteriana',
+            candidiasis: 'Candidiasis Vulvovaginal',
+            herpes: 'Herpes Genital (VHS)',
+            tricomoniasis: 'Tricomoniasis Vaginal',
+            verrugas: 'Condilomas Acuminados (VPH)'
+        };
+        
+        condiciones.forEach(cond => {
+            if (document.getElementById(`${cond}_check`).checked) {
+                haySeleccion = true;
+                const grado = parseInt(document.getElementById(`${cond}_grado`).value) - 1;
+                html += `
+                    <div class="mb-3 p-2 border-start border-primary border-3 ps-3">
+                        <strong class="text-primary">${nombres[cond]}:</strong>
+                        <p class="mb-0 small mt-1">${descripciones[cond][grado]}</p>
+                    </div>
+                `;
+            }
+        });
+        
+        if (!haySeleccion) {
+            descDiv.innerHTML = '<p class="text-muted text-center"><i>Seleccione patologías para ver la descripción clínica</i></p>';
+        } else {
+            descDiv.innerHTML = html;
+        }
+    }
+
+    function guardarImagen() {
+        const link = document.createElement('a');
+        link.download = 'simulacion_patologia_cervical.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+
+    function limpiarTodo() {
+        const condiciones = ['vph', 'infeccion', 'candidiasis', 'herpes', 'tricomoniasis', 'verrugas'];
+        condiciones.forEach(cond => {
+            document.getElementById(`${cond}_check`).checked = false;
+        });
+        dibujarPatologias();
+    }
+
+    // Dibujar estado inicial
+    dibujarPatologias();
+</script>
+{% endblock %}

@@ -431,6 +431,82 @@ def horarios_disponibles():
     return jsonify({'horarios': horarios_disponibles})
 
 
+# ==================== SIMULADOR DE PATOLOGÍAS IA ====================
+
+@app.route('/simulador-patologias')
+def simulador_patologias():
+    """Página del simulador de visualización de patologías combinadas"""
+    return render_template('simulador_patologias.html')
+
+
+@app.route('/api/generar-imagen-patologia', methods=['POST'])
+def generar_imagen_patologia():
+    """
+    API para generar imagen de patologías combinadas con IA.
+    
+    En producción, aquí se conectaría con un modelo de difusión entrenado
+    como Stable Diffusion fine-tuned con imágenes médicas.
+    """
+    condiciones = request.json
+    
+    # Construir descripción basada en las condiciones seleccionadas
+    descripciones_patologias = {
+        'vph': {
+            0: 'Tejido cervical sin alteraciones visibles.',
+            1: 'Displasia leve (NIC I): células anormales en el tercio inferior del epitelio.',
+            2: 'Displasia moderada (NIC II): células anormales en dos tercios del epitelio.',
+            3: 'Displasia severa (NIC III): células anormales en todo el espesor.',
+            4: 'Carcinoma in situ: células cancerosas sin invasión profunda.'
+        },
+        'infeccion': {
+            0: 'Sin signos de infección bacteriana.',
+            1: 'Vaginosis bacteriana leve: flujo ligeramente alterado.',
+            2: 'Vaginosis moderada: flujo grisáceo con olor característico.',
+            3: 'Vaginosis severa: flujo abundante, inflamación marcada.'
+        },
+        'candidiasis': {
+            0: 'Sin signos de candidiasis.',
+            1: 'Candidiasis leve: flujo blanquecino, prurito moderado.',
+            2: 'Candidiasis moderada: placas blancas visibles, eritema.',
+            3: 'Candidiasis severa: placas extensas, fisuras, edema marcado.'
+        },
+        'herpes': {
+            0: 'Herpes latente: virus presente sin lesiones visibles.',
+            1: 'Fase inicial: eritema, hormigueo reportado.',
+            2: 'Vesículas activas: agrupadas con contenido claro.',
+            3: 'Úlceras herpéticas: lesiones dolorosas por ruptura de vesículas.'
+        },
+        'tricomoniasis': {
+            0: 'Sin signos de tricomoniasis.',
+            1: 'Tricomoniasis leve: flujo ligeramente espumoso.',
+            2: 'Tricomoniasis moderada: flujo amarillo-verdoso, cérvix en fresa.',
+            3: 'Tricomoniasis severa: inflamación severa, petequias extensas.'
+        }
+    }
+    
+    descripcion_completa = []
+    prompt_para_ia = []
+    
+    for condicion, data in condiciones.items():
+        if data.get('activo'):
+            grado = data.get('grado', 0)
+            if condicion in descripciones_patologias:
+                descripcion_completa.append(descripciones_patologias[condicion][grado])
+                prompt_para_ia.append(f"{condicion}_grado_{grado}")
+    
+    # En producción, aquí se llamaría al modelo de IA:
+    # imagen_generada = modelo_difusion.generar(prompt_para_ia)
+    # imagen_url = guardar_imagen(imagen_generada)
+    
+    # Por ahora, devolvemos un placeholder
+    return jsonify({
+        'imagen_url': '/static/img/placeholder_patologia.png',
+        'descripcion': '<br>'.join(descripcion_completa),
+        'prompt_utilizado': ', '.join(prompt_para_ia),
+        'mensaje': 'Para generar imágenes reales, se requiere un modelo de difusión entrenado con datos médicos.'
+    })
+
+
 # ==================== MANEJO DE ERRORES ====================
 
 @app.errorhandler(404)
